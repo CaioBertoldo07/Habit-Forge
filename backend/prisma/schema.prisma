@@ -1,0 +1,116 @@
+// Prisma Schema para Habit Forge
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo de Usuário
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  password      String
+  avatar        String?
+  xp            Int      @default(0)
+  level         Int      @default(1)
+  coins         Int      @default(0)
+  streak        Int      @default(0)
+  maxStreak     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  habits        Habit[]
+  achievements  UserAchievement[]
+  friendships   Friendship[]      @relation("UserFriendships")
+  friendsOf     Friendship[]      @relation("FriendOf")
+  
+  @@map("users")
+}
+
+// Modelo de Hábito
+model Habit {
+  id            String   @id @default(uuid())
+  title         String
+  description   String?  @db.Text
+  category      String   // Saúde, Estudos, Trabalho, Fitness, etc
+  frequency     String   // daily, weekly, monthly
+  goal          Int      @default(1) // Quantas vezes deve ser cumprido
+  difficulty    String   @default("medium") // easy, medium, hard
+  color         String   @default("#6366f1")
+  icon          String   @default("📝")
+  xpReward      Int      @default(10)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  completions   HabitCompletion[]
+  
+  @@map("habits")
+}
+
+// Modelo de Conclusão de Hábito
+model HabitCompletion {
+  id            String   @id @default(uuid())
+  completedAt   DateTime @default(now())
+  note          String?  @db.Text
+  
+  habitId       String
+  habit         Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  
+  @@map("habit_completions")
+}
+
+// Modelo de Conquista/Achievement
+model Achievement {
+  id            String   @id @default(uuid())
+  title         String
+  description   String   @db.Text
+  icon          String
+  category      String   // Hábitos, Streak, Nível, Social
+  requirement   Int      // Valor necessário para desbloquear
+  xpReward      Int      @default(50)
+  createdAt     DateTime @default(now())
+  
+  users         UserAchievement[]
+  
+  @@map("achievements")
+}
+
+// Tabela de relacionamento User-Achievement
+model UserAchievement {
+  id            String   @id @default(uuid())
+  unlockedAt    DateTime @default(now())
+  
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+// Modelo de Amizade
+model Friendship {
+  id            String   @id @default(uuid())
+  status        String   @default("pending") // pending, accepted, rejected
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  userId        String
+  user          User     @relation("UserFriendships", fields: [userId], references: [id], onDelete: Cascade)
+  
+  friendId      String
+  friend        User     @relation("FriendOf", fields: [friendId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, friendId])
+  @@map("friendships")
+}
