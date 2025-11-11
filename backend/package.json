@@ -1,7 +1,34 @@
 {
+  "name": "habit-forge-backend",
+  "version": "1.0.0",
+  "description": "Backend API para Habit Forge - Sistema de Metas e Hábitos Gamificado",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "prisma:migrate": "npx prisma migrate dev",
+    "prisma:generate": "npx prisma generate",
+    "prisma:studio": "npx prisma studio",
+    "seed": "node prisma/seed.js"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "keywords": ["habits", "gamification", "nodejs", "express"],
+  "author": "Caio Bertoldo, Guilherme Montenegro, Diogo Santos, Mário Bessa",
+  "license": "MIT",
   "dependencies": {
-    "@prisma/client": "^6.19.0",
-    "express": "^5.1.0",
-    "prisma": "^6.19.0"
+    "@prisma/client": "^5.7.0",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "socket.io": "^4.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "prisma": "^5.7.0"
   }
 }
