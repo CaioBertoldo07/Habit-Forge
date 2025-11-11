@@ -1,0 +1,21 @@
+.app {
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+.loading-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.loading-screen p {
+  font-size: 1.125rem;
+  color: var(--text-muted);
+  animation: pulse 1.5s ease-in-out infinite;
+}

@@ -1,0 +1,101 @@
+.header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--bg-tertiary);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.header-title-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.header-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-subtitle {
+    color: var(--text-muted);
+    font-size: 0.938rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.header-action-btn {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--bg-hover);
+    border-radius: var(--border-radius-lg);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.header-action-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--danger);
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 700;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--bg-secondary);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: var(--spacing-md);
+    }
+
+    .header-title {
+        font-size: 1.25rem;
+    }
+
+    .header-subtitle {
+        font-size: 0.813rem;
+    }
+
+    .header-action-btn {
+        width: 40px;
+        height: 40px;
+    }
+}

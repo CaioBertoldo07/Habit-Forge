@@ -1,0 +1,112 @@
+.input-wrapper {
+    width: 100%;
+    margin-bottom: var(--spacing-lg);
+}
+
+.input-label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-required {
+    color: var(--danger);
+    margin-left: 0.25rem;
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--bg-secondary);
+    border: 2px solid var(--bg-tertiary);
+    border-radius: var(--border-radius-lg);
+    transition: all var(--transition-base);
+    overflow: hidden;
+}
+
+.input-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transform: scaleX(0);
+    transition: transform var(--transition-base);
+}
+
+.input-focused::before {
+    transform: scaleX(1);
+}
+
+.input-focused {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.input-error {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.input-field {
+    flex: 1;
+    padding: 0.875rem 1rem;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: var(--font-sans);
+}
+
+.input-field::placeholder {
+    color: var(--text-muted);
+}
+
+.input-field:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.input-icon-left,
+.input-icon-right {
+    display: flex;
+    align-items: center;
+    color: var(--text-muted);
+    padding: 0 1rem;
+}
+
+.input-toggle-password {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color var(--transition-base);
+}
+
+.input-toggle-password:hover {
+    color: var(--primary);
+}
+
+.input-error-message {
+    display: block;
+    margin-top: var(--spacing-sm);
+    color: var(--danger);
+    font-size: 0.875rem;
+    animation: slideInLeft var(--transition-base);
+}
+
+/* Autofill styles */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text-primary);
+    -webkit-box-shadow: 0 0 0px 1000px var(--bg-secondary) inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
