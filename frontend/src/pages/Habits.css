@@ -209,7 +209,6 @@
     line-height: 1.5;
     margin: 0;
     display: -webkit-box;
-    /* -webkit-line-clamp: 2; */
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -304,7 +303,6 @@
 
 /* MODAL */
 
-
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -320,26 +318,27 @@
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) !important;
     width: 90%;
     max-width: 600px;
-    max-height: 90vh;
+    max-height: 85vh;
     background: var(--bg-secondary);
     border: 1px solid var(--bg-tertiary);
     border-radius: var(--border-radius-xl);
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     z-index: 1000;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
 .modal-header {
+    flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: var(--spacing-xl);
     border-bottom: 1px solid var(--bg-tertiary);
+    background: var(--bg-secondary);
 }
 
 .modal-header h2 {
@@ -361,6 +360,7 @@
     color: var(--text-muted);
     cursor: pointer;
     transition: all var(--transition-base);
+    flex-shrink: 0;
 }
 
 .modal-close:hover {
@@ -368,14 +368,61 @@
     color: var(--text-primary);
 }
 
+.modal form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
 .modal-content {
     flex: 1;
     padding: var(--spacing-xl);
+    padding-bottom: var(--spacing-2xl);
     overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Customizar scrollbar do modal */
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: var(--bg-tertiary);
+    border-radius: var(--border-radius-full);
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: var(--bg-hover);
+}
+
+.modal-footer {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl);
+    border-top: 1px solid var(--bg-tertiary);
+    background: var(--bg-secondary);
 }
 
 .form-group {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+/* Sobrescrever margin do Input component dentro do modal */
+.modal-input {
+    margin-bottom: 0 !important;
 }
 
 .form-label {
@@ -503,14 +550,6 @@
     background: var(--primary);
     border-color: var(--primary);
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-}
-
-.modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: var(--spacing-md);
-    padding: var(--spacing-xl);
-    border-top: 1px solid var(--bg-tertiary);
 }
 
 

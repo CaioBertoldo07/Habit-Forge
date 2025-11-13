@@ -51,6 +51,7 @@ const Habits = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingHabit, setEditingHabit] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -139,6 +140,7 @@ const Habits = () => {
     e.preventDefault();
     
     try {
+      setSubmitting(true);
       if (editingHabit) {
         await habitAPI.update(editingHabit.id, formData);
       } else {
@@ -149,6 +151,9 @@ const Habits = () => {
       loadHabits();
     } catch (error) {
       console.error('Erro ao salvar hábito:', error);
+      alert('Erro ao salvar hábito. Tente novamente.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -350,9 +355,10 @@ const Habits = () => {
               />
               <motion.div
                 className="modal"
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                style={{ transform: 'translate(-50%, -50%)' }}
               >
                 <div className="modal-header">
                   <h2>{editingHabit ? 'Editar Hábito' : 'Novo Hábito'}</h2>
@@ -361,106 +367,111 @@ const Habits = () => {
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="modal-content">
-                  <Input
-                    label="Título do Hábito"
-                    type="text"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="Ex: Meditar 10 minutos"
-                    required
-                    autoFocus
-                  />
-
-                  <div className="form-group">
-                    <label className="form-label">Descrição (opcional)</label>
-                    <textarea
-                      className="form-textarea"
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      placeholder="Adicione mais detalhes sobre o hábito..."
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="form-row">
+                <form onSubmit={handleSubmit}>
+                  <div className="modal-content">
                     <div className="form-group">
-                      <label className="form-label">Categoria</label>
-                      <select
-                        className="form-select"
-                        value={formData.category}
-                        onChange={(e) => {
-                          const category = CATEGORIES.find(c => c.value === e.target.value);
-                          setFormData({ 
-                            ...formData, 
-                            category: e.target.value,
-                            color: category?.color || '#6366f1'
-                          });
-                        }}
-                      >
-                        {CATEGORIES.filter(c => c.value !== 'all').map(cat => (
-                          <option key={cat.value} value={cat.value}>
-                            {cat.label}
-                          </option>
-                        ))}
-                      </select>
+                      <Input
+                        label="Título do Hábito"
+                        type="text"
+                        value={formData.title}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        placeholder="Ex: Meditar 10 minutos"
+                        required
+                        autoFocus
+                        className="modal-input"
+                      />
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">Frequência</label>
-                      <select
-                        className="form-select"
-                        value={formData.frequency}
-                        onChange={(e) => setFormData({ ...formData, frequency: e.target.value })}
-                      >
-                        {FREQUENCIES.map(freq => (
-                          <option key={freq.value} value={freq.value}>
-                            {freq.label}
-                          </option>
+                      <label className="form-label">Descrição (opcional)</label>
+                      <textarea
+                        className="form-textarea"
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        placeholder="Adicione mais detalhes sobre o hábito..."
+                        rows={3}
+                      />
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label className="form-label">Categoria</label>
+                        <select
+                          className="form-select"
+                          value={formData.category}
+                          onChange={(e) => {
+                            const category = CATEGORIES.find(c => c.value === e.target.value);
+                            setFormData({ 
+                              ...formData, 
+                              category: e.target.value,
+                              color: category?.color || '#6366f1'
+                            });
+                          }}
+                        >
+                          {CATEGORIES.filter(c => c.value !== 'all').map(cat => (
+                            <option key={cat.value} value={cat.value}>
+                              {cat.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="form-group">
+                        <label className="form-label">Frequência</label>
+                        <select
+                          className="form-select"
+                          value={formData.frequency}
+                          onChange={(e) => setFormData({ ...formData, frequency: e.target.value })}
+                        >
+                          {FREQUENCIES.map(freq => (
+                            <option key={freq.value} value={freq.value}>
+                              {freq.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Dificuldade</label>
+                      <div className="difficulty-selector">
+                        {DIFFICULTIES.map(diff => (
+                          <button
+                            key={diff.value}
+                            type="button"
+                            className={`difficulty-btn ${formData.difficulty === diff.value ? 'active' : ''}`}
+                            onClick={() => setFormData({ ...formData, difficulty: diff.value })}
+                            style={{ '--difficulty-color': diff.color }}
+                          >
+                            <span className="difficulty-label">{diff.label}</span>
+                            <span className="difficulty-xp">+{diff.xp} XP</span>
+                          </button>
                         ))}
-                      </select>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Dificuldade</label>
-                    <div className="difficulty-selector">
-                      {DIFFICULTIES.map(diff => (
-                        <button
-                          key={diff.value}
-                          type="button"
-                          className={`difficulty-btn ${formData.difficulty === diff.value ? 'active' : ''}`}
-                          onClick={() => setFormData({ ...formData, difficulty: diff.value })}
-                          style={{ '--difficulty-color': diff.color }}
-                        >
-                          <span className="difficulty-label">{diff.label}</span>
-                          <span className="difficulty-xp">+{diff.xp} XP</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Ícone</label>
-                    <div className="icon-selector">
-                      {ICONS.map(icon => (
-                        <button
-                          key={icon}
-                          type="button"
-                          className={`icon-btn ${formData.icon === icon ? 'active' : ''}`}
-                          onClick={() => setFormData({ ...formData, icon })}
-                        >
-                          {icon}
-                        </button>
-                      ))}
+                    <div className="form-group">
+                      <label className="form-label">Ícone</label>
+                      <div className="icon-selector">
+                        {ICONS.map(icon => (
+                          <button
+                            key={icon}
+                            type="button"
+                            className={`icon-btn ${formData.icon === icon ? 'active' : ''}`}
+                            onClick={() => setFormData({ ...formData, icon })}
+                          >
+                            {icon}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
                   <div className="modal-footer">
-                    <Button variant="ghost" onClick={handleCloseModal}>
+                    <Button variant="ghost" type="button" onClick={handleCloseModal}>
                       Cancelar
                     </Button>
-                    <Button variant="primary" type="submit">
+                    <Button variant="primary" type="submit" loading={submitting}>
                       {editingHabit ? 'Salvar Alterações' : 'Criar Hábito'}
                     </Button>
                   </div>
