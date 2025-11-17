@@ -1,0 +1,207 @@
+.reward-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    background: var(--bg-secondary);
+    border: 2px solid var(--bg-tertiary);
+    border-radius: var(--border-radius-xl);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    padding: var(--spacing-lg);
+    min-width: 350px;
+    max-width: 450px;
+}
+
+.toast-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius-md);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-base);
+}
+
+.toast-close:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.toast-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.reward-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--border-radius-lg);
+    border: 2px solid transparent;
+    transition: all var(--transition-base);
+}
+
+.reward-item:hover {
+    border-color: var(--primary);
+    transform: translateX(4px);
+}
+
+/* XP Reward */
+.xp-reward {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+}
+
+.xp-reward:hover {
+    border-color: var(--primary);
+}
+
+.reward-icon {
+    flex-shrink: 0;
+    color: var(--primary);
+}
+
+/* Coins Reward */
+.coins-reward {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
+}
+
+.coins-reward:hover {
+    border-color: var(--warning);
+}
+
+.coin-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+/* Level Reward */
+.level-reward {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+}
+
+.level-reward:hover {
+    border-color: var(--success);
+}
+
+.level-icon {
+    color: var(--success);
+}
+
+/* Streak Reward */
+.streak-reward {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+}
+
+.streak-reward:hover {
+    border-color: var(--danger);
+}
+
+.milestone-emoji {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+/* Achievement Reward */
+.achievement-reward {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+}
+
+.achievement-reward:hover {
+    border-color: #8b5cf6;
+}
+
+.achievement-icon {
+    color: #8b5cf6;
+}
+
+/* Reward Details */
+.reward-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.reward-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.reward-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.reward-bonus {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.reward-title {
+    font-size: 0.875rem;
+    color: var(--primary);
+    font-weight: 600;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+/* Streak Info */
+.streak-info {
+    background: rgba(239, 68, 68, 0.1);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.streak-icon {
+    color: #ef4444;
+}
+
+.streak-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Animações */
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.reward-item:hover {
+    animation: pulse 0.5s ease-in-out;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .reward-toast {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        max-width: none;
+    }
+}

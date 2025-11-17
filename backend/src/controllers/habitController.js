@@ -1,4 +1,11 @@
 const { PrismaClient } = require("@prisma/client");
+const { checkLevelUp, getXPProgressInLevel } = require("../utils/levelSystem");
+const {
+  updateUserStreak,
+  getStreakXPBonus,
+  getStreakMilestone,
+} = require("../utils/streakSystem");
+const { checkAndUnlockAchievements } = require("./achievementController");
 
 const prisma = new PrismaClient();
 
@@ -45,6 +52,9 @@ const createHabit = async (req, res) => {
         userId,
       },
     });
+
+    // Verificar conquistas (criação de hábitos)
+    await checkAndUnlockAchievements(userId);
 
     return res.status(201).json({
       success: true,
@@ -238,7 +248,7 @@ const deleteHabit = async (req, res) => {
   }
 };
 
-// Marcar hábito como concluído
+// Marcar hábito como concluído (VERSÃO MELHORADA)
 const completeHabit = async (req, res) => {
   try {
     const { id } = req.params;
@@ -257,6 +267,42 @@ const completeHabit = async (req, res) => {
       });
     }
 
+    // Verificar se já completou hoje
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const completedToday = await prisma.habitCompletion.findFirst({
+      where: {
+        habitId: id,
+        completedAt: {
+          gte: today,
+          lt: tomorrow,
+        },
+      },
+    });
+
+    if (completedToday) {
+      return res.status(400).json({
+        error: true,
+        message: "Você já completou este hábito hoje!",
+      });
+    }
+
+    // Buscar usuário atual
+    const currentUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    // Atualizar streak
+    const streakResult = await updateUserStreak(userId);
+    const streakBonus = getStreakXPBonus(streakResult?.streak || 0);
+    const streakMilestone = getStreakMilestone(streakResult?.streak || 0);
+
+    // Calcular XP total (base + bônus de streak)
+    const totalXP = habit.xpReward + streakBonus;
+
     // Criar conclusão
     const completion = await prisma.habitCompletion.create({
       data: {
@@ -265,43 +311,99 @@ const completeHabit = async (req, res) => {
       },
     });
 
-    // Atualizar XP do usuário
+    // Atualizar XP e coins do usuário
+    const newTotalXP = currentUser.xp + totalXP;
+    const coinsGained = Math.floor(totalXP / 10); // 1 coin a cada 10 XP
+
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
-        xp: {
-          increment: habit.xpReward,
+        xp: newTotalXP,
+        coins: {
+          increment: coinsGained,
         },
       },
     });
 
-    // Calcular novo nível (a cada 100 XP = 1 nível)
-    const newLevel = Math.floor(updatedUser.xp / 100) + 1;
+    // Verificar se subiu de nível
+    const levelResult = checkLevelUp(currentUser.xp, newTotalXP);
 
-    if (newLevel > updatedUser.level) {
+    if (levelResult.leveledUp) {
+      // Atualizar nível no banco
       await prisma.user.update({
         where: { id: userId },
-        data: { level: newLevel },
+        data: {
+          level: levelResult.newLevel,
+          coins: {
+            increment: levelResult.rewards.coins, // Recompensa por nível
+          },
+        },
       });
     }
 
-    // Emitir evento de WebSocket para atualização em tempo real
-    const io = req.app.get("io");
-    io.to(`user_${userId}`).emit("habit_completed", {
-      habit,
-      xpGained: habit.xpReward,
-      newXp: updatedUser.xp,
-      newLevel,
-    });
+    // Verificar e desbloquear conquistas
+    const newAchievements = await checkAndUnlockAchievements(userId);
 
-    return res.json({
+    // Calcular progresso no nível atual
+    const xpProgress = getXPProgressInLevel(newTotalXP, levelResult.newLevel);
+
+    // Preparar resposta
+    const response = {
       success: true,
       message: "Hábito concluído! 🎉",
       completion,
-      xpGained: habit.xpReward,
-      newXp: updatedUser.xp,
-      leveledUp: newLevel > updatedUser.level,
-    });
+      rewards: {
+        xp: {
+          base: habit.xpReward,
+          bonus: streakBonus,
+          total: totalXP,
+        },
+        coins: coinsGained,
+        newTotalXP,
+        newTotalCoins:
+          updatedUser.coins +
+          (levelResult.leveledUp ? levelResult.rewards.coins : 0),
+      },
+      streak: streakResult,
+      streakMilestone,
+      level: {
+        current: levelResult.newLevel,
+        leveledUp: levelResult.leveledUp,
+        levelsGained: levelResult.levelsGained || 0,
+        rewards: levelResult.leveledUp ? levelResult.rewards : null,
+        progress: xpProgress,
+      },
+      achievements: {
+        unlocked: newAchievements.length,
+        new: newAchievements,
+      },
+    };
+
+    // Emitir evento de WebSocket para atualização em tempo real
+    const io = req.app.get("io");
+    if (io) {
+      io.to(`user_${userId}`).emit("habit_completed", response);
+
+      // Eventos específicos
+      if (levelResult.leveledUp) {
+        io.to(`user_${userId}`).emit("level_up", {
+          level: levelResult.newLevel,
+          rewards: levelResult.rewards,
+        });
+      }
+
+      if (newAchievements.length > 0) {
+        io.to(`user_${userId}`).emit("achievements_unlocked", {
+          achievements: newAchievements,
+        });
+      }
+
+      if (streakMilestone) {
+        io.to(`user_${userId}`).emit("streak_milestone", streakMilestone);
+      }
+    }
+
+    return res.json(response);
   } catch (error) {
     console.error("Erro ao completar hábito:", error);
     return res.status(500).json({

@@ -14,7 +14,12 @@
   "prisma": {
     "seed": "node prisma/seed.js"
   },
-  "keywords": ["habits", "gamification", "nodejs", "express"],
+  "keywords": [
+    "habits",
+    "gamification",
+    "nodejs",
+    "express"
+  ],
   "author": "Caio Bertoldo, Guilherme Montenegro, Diogo Santos, Mário Bessa",
   "license": "MIT",
   "dependencies": {
@@ -25,6 +30,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
+    "node-cron": "^4.2.1",
     "socket.io": "^4.6.0"
   },
   "devDependencies": {

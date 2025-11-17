@@ -18,6 +18,7 @@ import Button from '../components/common/Button';
 import { useAuth } from '../contexts/AuthContext';
 import { habitAPI, progressAPI, userAPI } from '../services/api';
 import './Dashboard.css';
+import XPBar from '../components/gamefication/XPBar';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -171,6 +172,18 @@ const Dashboard = () => {
             </Card>
           </motion.div>
         </div>
+
+        <Card glow>
+          <h3>Seu Progresso</h3>
+          <XPBar
+            currentXP={user?.xp % 100 || 0}
+            requiredXP={100}
+            currentLevel={user?.level || 1}
+            nextLevel={(user?.level || 1) + 1}
+            size="large"
+            animated={true}
+          />
+      </Card>
 
         {/* Main Content Grid */}
         <div className="dashboard-grid">

@@ -9,6 +9,9 @@ import Achievements from './pages/Achievements';
 import Profile from './pages/Profile';
 import Leaderboard from './pages/Leaderboard';
 import './App.css';
+import { io } from 'socket.io-client';
+import RewardToast from './components/gamefication/RewardToast';
+import { useState, useEffect } from 'react';
 
 // Componente de rota protegida
 const ProtectedRoute = ({ children }) => {
@@ -27,6 +30,14 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
+  const [rewardToast, setRewardToast] = useState(null);
+
+  useEffect(() => {
+    const socket = io('http://localhost:5000');
+    socket.on('habit_completed', (data) => setRewardToast(data));
+    return () => socket.disconnect();
+  }, []);
+
   return (
     <div className="app">
       <Routes>
@@ -94,6 +105,13 @@ function App() {
         {/* 404 */}
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
+
+      {rewardToast && (
+        <RewardToast 
+          rewards={rewardToast} 
+          onClose={() => setRewardToast(null)} 
+        />
+      )}
     </div>
   );
 }

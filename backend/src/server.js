@@ -4,6 +4,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const { initializeCronJobs } = require("./utils/cronJobs");
 
 // Importar rotas
 const authRoutes = require("./routes/authRoutes");
@@ -80,4 +81,6 @@ httpServer.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
   console.log(`📡 Ambiente: ${process.env.NODE_ENV}`);
   console.log(`🔗 API disponível em: http://localhost:${PORT}/api`);
+
+  initializeCronJobs();
 });
