@@ -46,12 +46,13 @@ const register = async (req, res) => {
     // Hash da senha
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Criar usuário
+    // Criar usuário com weekStartDate inicializado
     const user = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
+        weekStartDate: new Date(), // ADICIONAR
       },
       select: {
         id: true,
@@ -59,9 +60,11 @@ const register = async (req, res) => {
         email: true,
         avatar: true,
         xp: true,
+        xpWeek: true,
         level: true,
         coins: true,
         streak: true,
+        maxStreak: true,
         createdAt: true,
       },
     });

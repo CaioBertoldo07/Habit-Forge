@@ -39,17 +39,22 @@ export const AuthProvider = ({ children }) => {
   const register = async (data) => {
     try {
       setError(null);
+      setLoading(true);
+      
       const response = await authAPI.register(data);
       const { user, token } = response.data;
 
+      // Salvar token e usuário
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
 
+      setLoading(false);
       return { success: true };
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Erro ao registrar";
       setError(errorMessage);
+      setLoading(false);
       return { success: false, error: errorMessage };
     }
   };
@@ -57,18 +62,23 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       setError(null);
+      setLoading(true);
+      
       const response = await authAPI.login(credentials);
       const { user, token } = response.data;
 
+      // Salvar token e usuário
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
 
+      setLoading(false);
       return { success: true };
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Erro ao fazer login";
       setError(errorMessage);
+      setLoading(false);
       return { success: false, error: errorMessage };
     }
   };

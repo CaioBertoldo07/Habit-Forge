@@ -377,6 +377,43 @@
     color: white;
 }
 
+.info-card {
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.info-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.info-icon {
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.info-text h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.info-text p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .info-content {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
 /* ============================================
    RESPONSIVO
 ============================================ */

@@ -86,4 +86,12 @@ export const progressAPI = {
   getCategories: () => api.get("/progress/categories"),
 };
 
+// RANKING
+export const rankingAPI = {
+  getWeeklyRanking: (limit = 50) => api.get(`/ranking/weekly?limit=${limit}`),
+  getMyPosition: () => api.get("/ranking/my-position"),
+  getLeagueRanking: (league) => api.get(`/ranking/league/${league}`),
+  getAllLeagues: () => api.get("/ranking/leagues"),
+};
+
 export default api;

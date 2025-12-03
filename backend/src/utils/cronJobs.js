@@ -1,5 +1,6 @@
 const cron = require("node-cron");
 const { checkExpiredStreaks } = require("../utils/streakSystem");
+const { resetWeeklyXP } = require("./rankingSystem");
 
 /**
  * Tarefas agendadas (Cron Jobs)
@@ -34,15 +35,33 @@ const scheduleStreakCheck = () => {
   console.log("⏰ Cron job de streaks agendado para 00:05 diariamente");
 };
 
-// Inicializar todos os cron jobs
+// Reset de XP semanal - toda segunda-feira às 00:00
+const scheduleWeeklyReset = () => {
+  // Cron: "0 0 * * 1" = toda segunda-feira à meia-noite
+  cron.schedule(
+    "0 0 * * 1",
+    async () => {
+      console.log("🔄 Executando reset semanal de XP...");
+
+      try {
+        await resetWeeklyXP();
+        console.log("✅ Reset semanal concluído com sucesso!");
+      } catch (error) {
+        console.error("❌ Erro no reset semanal:", error);
+      }
+    },
+    {
+      timezone: "America/Manaus",
+    }
+  );
+
+  console.log("⏰ Cron job de reset semanal agendado para segundas-feiras 00:00");
+};
+
+// Atualizar a função initializeCronJobs:
 const initializeCronJobs = () => {
   scheduleStreakCheck();
-
-  // Adicionar mais cron jobs aqui conforme necessário
-  // Exemplos:
-  // - Enviar notificações diárias
-  // - Limpar dados antigos
-  // - Gerar relatórios semanais
+  scheduleWeeklyReset(); // ADICIONAR ESTA LINHA
 
   console.log("✅ Todos os cron jobs inicializados");
 };
@@ -50,4 +69,5 @@ const initializeCronJobs = () => {
 module.exports = {
   initializeCronJobs,
   scheduleStreakCheck,
+  scheduleWeeklyReset, // ADICIONAR
 };

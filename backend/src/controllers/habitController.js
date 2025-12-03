@@ -6,7 +6,7 @@ const {
   getStreakMilestone,
 } = require("../utils/streakSystem");
 const { checkAndUnlockAchievements } = require("./achievementController");
-
+const { updateWeeklyXP } = require("../utils/rankingSystem");
 const prisma = new PrismaClient();
 
 // Criar novo hábito
@@ -325,6 +325,9 @@ const completeHabit = async (req, res) => {
       },
     });
 
+    // atualizar XP semanal
+    await updateWeeklyXP(userId, totalXP);
+
     // Verificar se subiu de nível
     const levelResult = checkLevelUp(currentUser.xp, newTotalXP);
 
@@ -382,9 +385,9 @@ const completeHabit = async (req, res) => {
     // Emitir evento de WebSocket para atualização em tempo real
     const io = req.app.get("io");
     if (io) {
+      // Eventos existentes
       io.to(`user_${userId}`).emit("habit_completed", response);
 
-      // Eventos específicos
       if (levelResult.leveledUp) {
         io.to(`user_${userId}`).emit("level_up", {
           level: levelResult.newLevel,
@@ -401,6 +404,30 @@ const completeHabit = async (req, res) => {
       if (streakMilestone) {
         io.to(`user_${userId}`).emit("streak_milestone", streakMilestone);
       }
+
+      // NOVO: Emitir atualização de ranking
+      const {
+        getWeeklyRanking,
+        getUserRankingPosition,
+      } = require("../utils/rankingSystem");
+
+      // Buscar ranking atualizado
+      const updatedRanking = await getWeeklyRanking(50);
+      const userPosition = await getUserRankingPosition(userId);
+
+      // Broadcast para todos os usuários conectados
+      io.emit("ranking:update", {
+        ranking: updatedRanking,
+        updatedUser: {
+          userId,
+          name: currentUser.name,
+          xpGained: totalXP,
+          position: userPosition?.position,
+        },
+      });
+
+      // Emitir para o usuário específico
+      io.to(`user_${userId}`).emit("ranking:position_update", userPosition);
     }
 
     return res.json(response);

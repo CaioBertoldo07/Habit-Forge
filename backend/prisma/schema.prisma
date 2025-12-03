@@ -16,6 +16,8 @@ model User {
   password      String
   avatar        String?
   xp            Int      @default(0)
+  xpWeek        Int      @default(0)      // NOVO
+  weekStartDate DateTime?                 // NOVO
   level         Int      @default(1)
   coins         Int      @default(0)
   streak        Int      @default(0)

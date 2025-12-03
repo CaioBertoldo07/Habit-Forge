@@ -42,12 +42,26 @@ const Login = () => {
     setError('');
     setLoading(true);
 
-    const result = await login(loginData);
-    
-    if (result.success) {
-      navigate('/dashboard');
-    } else {
-      setError(result.error);
+    console.log('🔵 Iniciando login...', loginData);
+
+    try {
+      const result = await login(loginData);
+      
+      console.log('🟢 Resultado do login:', result);
+      
+      if (result.success) {
+        console.log('✅ Login bem-sucedido, redirecionando...');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 100);
+      } else {
+        console.log('❌ Erro no login:', result.error);
+        setError(result.error);
+      }
+    } catch (err) {
+      console.error('🔴 Erro no login:', err);
+      setError('Erro ao fazer login. Tente novamente.');
+    } finally {
       setLoading(false);
     }
   };

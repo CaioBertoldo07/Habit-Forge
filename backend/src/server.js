@@ -12,6 +12,7 @@ const userRoutes = require("./routes/userRoutes");
 const habitRoutes = require("./routes/habitRoutes");
 const achievementRoutes = require("./routes/achievementRoutes");
 const progressRoutes = require("./routes/progressRoutes");
+const rankingRoutes = require("./routes/rankingRoutes");
 
 const app = express();
 const httpServer = createServer(app);
@@ -42,6 +43,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/habits", habitRoutes);
 app.use("/api/achievements", achievementRoutes);
 app.use("/api/progress", progressRoutes);
+app.use("/api/ranking", rankingRoutes);
 
 // Rota de teste
 app.get("/api/health", (req, res) => {
